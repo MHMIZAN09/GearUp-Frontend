@@ -17,6 +17,9 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { EllipsisVerticalIcon, LogOutIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { logout } from '../service/logout';
 
 export function NavUser({
   user,
@@ -28,7 +31,14 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
+  const router = useRouter();
+  const handleLogout = async (action: string) => {
+    if (action === 'logout') {
+      await logout();
+      toast.success('Logged out successfully!');
+      router.push('/login');
+    }
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -74,7 +84,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup></DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={async () => await handleLogout('logout')}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

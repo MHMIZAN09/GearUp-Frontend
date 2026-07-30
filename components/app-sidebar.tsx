@@ -40,8 +40,8 @@ const data = {
       icon: <LayoutDashboardIcon />,
     },
     {
-      title: 'Lifecycle',
-      url: '#',
+      title: 'profile',
+      url: '/admin-dashboard/profile',
       icon: <ListIcon />,
     },
     {

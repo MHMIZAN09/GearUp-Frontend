@@ -1,11 +1,11 @@
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { getMe } from '../../service/getMe';
+import { getUserProfile } from './_actions/profile.actions';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const result = await getMe();
-  console.log('result', result);
+  const result = await getUserProfile();
+  // console.log('result', result);
   return (
     <TooltipProvider delayDuration={0}>
       <SidebarProvider>

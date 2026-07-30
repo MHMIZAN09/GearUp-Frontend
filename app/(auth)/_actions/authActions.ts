@@ -1,8 +1,8 @@
 'use server';
 
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-
 type LoginActionState = {
   success: boolean;
   statusCode: number;
@@ -50,7 +50,15 @@ export const loginAction = async (prevState: LoginActionState, formData: FormDat
       sameSite: 'lax',
     });
 
-    redirect('/dashboard');
+    const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
+
+    if (decodedToken.role === 'ADMIN') {
+      redirect('/admin-dashboard');
+    } else if (decodedToken.role === 'PROVIDER') {
+      redirect('/provider-dashboard');
+    } else if (decodedToken.role === 'CUSTOMER') {
+      redirect('/dashboard');
+    }
   }
 
   return result;
