@@ -50,7 +50,7 @@ export const loginAction = async (prevState: LoginActionState, formData: FormDat
       sameSite: 'lax',
     });
 
-    redirect('/');
+    redirect('/dashboard');
   }
 
   return result;
@@ -78,5 +78,9 @@ export const registerAction = async (formData: FormData) => {
   });
 
   const result = await res.json();
-  console.log(result);
+  // console.log(result);
+  if (result.success) {
+    redirect('/login');
+  }
+  return result;
 };
