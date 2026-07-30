@@ -76,7 +76,7 @@ export const Navbar = ({
   menu = [
     { title: 'Home', url: '/' },
     { title: 'Browse Gear', url: '/gear' },
-    { title: 'Categories', url: '/categories' },
+    { title: 'Categories', url: '/category' },
     { title: 'About', url: '/about' },
     { title: 'Contact', url: '/contact' },
   ],
@@ -101,8 +101,6 @@ export const Navbar = ({
       router.push('/login');
     }
   };
-
-
 
   return (
     <header
