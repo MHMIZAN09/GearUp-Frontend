@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 
-import { Navbar } from '@/components/shared/Navbar';
+import { ThemeProvider } from '../components/ui/theme-provider';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      suppressHydrationWarning
       className={cn(
         'h-full',
         'antialiased',
@@ -41,8 +41,14 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

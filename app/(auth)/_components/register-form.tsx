@@ -12,7 +12,6 @@ import {
   User,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -20,11 +19,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { registerAction } from '../_actions/authActions';
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const router = useRouter();
-
-  // States
   const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'CUSTOMER' | 'PROVIDER'>('CUSTOMER');
 
@@ -33,7 +30,10 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
       <Card className="overflow-hidden border-border/50 shadow-xl rounded-2xl p-0 bg-card">
         <CardContent className="grid p-0 md:grid-cols-2">
           {/* Left Column: Interactive Form */}
-          <form className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+          <form
+            action={registerAction}
+            className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between"
+          >
             <FieldGroup className="gap-4">
               {/* Brand Header */}
               <div className="flex flex-col items-center text-center gap-1.5 mb-1">

@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { loginAction } from '../_actions/authActions';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +19,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       <Card className="overflow-hidden border-border/50 shadow-xl rounded-2xl p-0 bg-card">
         <CardContent className="grid p-0 md:grid-cols-2">
           {/* Left Column: Server Action Form */}
-          <form className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+          <form action={loginAction} className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
             <FieldGroup className="gap-5">
               {/* Brand Header */}
               <div className="flex flex-col items-center text-center gap-2 mb-2">
