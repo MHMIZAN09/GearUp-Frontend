@@ -13,16 +13,13 @@ import {
 
 import { Badge } from '@/components/ui/badge';
 
-import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
 import { CategoryFormDialog } from './category-form-dialog';
+import DeleteCategoryButton from './DeleteCategoryButton';
 
 export async function CategoryList() {
   const result = await getAllCategories();
 
-  const categories = result?.data?.categories || [];
-
-  if (!categories.length) {
+  if (!result?.data?.length) {
     return (
       <div className="rounded-xl border py-20 text-center">
         <h3 className="text-xl font-semibold">No Categories Found</h3>
@@ -50,7 +47,7 @@ export async function CategoryList() {
         </TableHeader>
 
         <TableBody>
-          {categories.map((category: any) => (
+          {result?.data?.map((category: any) => (
             <TableRow key={category.id}>
               <TableCell className="font-semibold">{category.name}</TableCell>
 
@@ -68,9 +65,7 @@ export async function CategoryList() {
                 <div className="flex justify-end gap-2">
                   <CategoryFormDialog mode="edit" category={category} />
 
-                  <Button variant="destructive" size="icon">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <DeleteCategoryButton id={category.id} />
                 </div>
               </TableCell>
             </TableRow>

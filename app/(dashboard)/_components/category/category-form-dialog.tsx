@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useRouter } from 'next/navigation';
 import { createCategory, updateCategory } from '../../_actions/category.actions';
 
 export interface ICategory {
@@ -34,6 +35,7 @@ type CategoryFormDialogProps = {
 };
 
 export function CategoryFormDialog({ mode, category }: CategoryFormDialogProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const action =
@@ -49,7 +51,7 @@ export function CategoryFormDialog({ mode, category }: CategoryFormDialogProps) 
         state.message ||
           (mode === 'edit' ? 'Category updated successfully' : 'Category created successfully'),
       );
-
+      router.refresh();
       setOpen(false);
     } else {
       toast.error(state.message || 'Something went wrong');
