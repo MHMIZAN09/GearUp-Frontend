@@ -1,10 +1,9 @@
-import { getMe } from '../../service/getMe';
+import Hero from '../../components/shared/Hero';
+
 const HomePage = () => {
-  const user = getMe();
-  console.log('user:', user);
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>Welcome to the Home Page</h1>
+    <div className="container mx-auto py-10">
+      <Hero />
     </div>
   );
 };
