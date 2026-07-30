@@ -1,6 +1,19 @@
 'use server';
 
-export const loginAction = async (formData: FormData) => {
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
+type LoginActionState = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+};
+
+export const loginAction = async (prevState: LoginActionState, formData: FormData) => {
   const email = formData.get('email');
   const password = formData.get('password');
   console.log(process.env.BACKEND_API_URL);
@@ -18,7 +31,29 @@ export const loginAction = async (formData: FormData) => {
   });
 
   const result = await res.json();
-  console.log(result);
+  // console.log(result);
+
+  if (result.success) {
+    const cookieStore = await cookies();
+
+    cookieStore.set('accessToken', result.data.accessToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 24,
+      sameSite: 'lax',
+    });
+
+    cookieStore.set('refreshToken', result.data.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'lax',
+    });
+
+    redirect('/');
+  }
+
+  return result;
 };
 
 export const registerAction = async (formData: FormData) => {

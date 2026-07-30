@@ -2,24 +2,38 @@
 
 import { Dumbbell, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { loginAction } from '../_actions/authActions';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const [showPassword, setShowPassword] = useState(false);
+  const [state, action, pending] = useActionState(loginAction, false);
+  // const router = useRouter();
+  useEffect(() => {
+    if (!state) return;
+    if (state?.success) {
+      toast.success(state.message || 'Login successful!');
+      // router.push('/');
+    }
+    if (!state.success) {
+      toast.error(state.message || 'Login failed. Please check your credentials.');
+    }
+  }, [state]);
 
   return (
     <div className={cn('flex flex-col gap-6 w-full max-w-4xl mx-auto', className)} {...props}>
       <Card className="overflow-hidden border-border/50 shadow-xl rounded-2xl p-0 bg-card">
         <CardContent className="grid p-0 md:grid-cols-2">
           {/* Left Column: Server Action Form */}
-          <form action={loginAction} className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+          <form action={action} className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
             <FieldGroup className="gap-5">
               {/* Brand Header */}
               <div className="flex flex-col items-center text-center gap-2 mb-2">
@@ -95,7 +109,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   type="submit"
                   className="w-full h-10 font-semibold shadow-md shadow-primary/15 transition-all gap-2 cursor-pointer"
                 >
-                  Continue
+                  {pending ? 'Logging in...' : 'Login'}
                 </Button>
               </Field>
 
