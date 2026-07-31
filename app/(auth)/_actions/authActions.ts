@@ -22,7 +22,7 @@ export const loginAction = async (prevState: LoginActionState, formData: FormDat
     email,
     password,
   };
-  const res = await fetch(`${process.env.BACKEND_URL}/api/auth/login`, {
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -38,14 +38,12 @@ export const loginAction = async (prevState: LoginActionState, formData: FormDat
 
     cookieStore.set('accessToken', result.data.accessToken, {
       httpOnly: true,
-      secure: true,
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24 * 1000, // 1 day in milliseconds
       sameSite: 'lax',
     });
 
     cookieStore.set('refreshToken', result.data.refreshToken, {
       httpOnly: true,
-      secure: true,
       maxAge: 60 * 60 * 24 * 7,
       sameSite: 'lax',
     });
@@ -77,7 +75,7 @@ export const registerAction = async (formData: FormData) => {
     password,
     role,
   };
-  const res = await fetch(`${process.env.BACKEND_URL}/api/auth/register`, {
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

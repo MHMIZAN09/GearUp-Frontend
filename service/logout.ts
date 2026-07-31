@@ -9,5 +9,7 @@ export const logout = async () => {
   cookieStore.delete('accessToken');
   cookieStore.delete('refreshToken');
 
-  revalidateTag('getMe', 'max');
+  revalidateTag('getMe', {
+    expire: 0,
+  });
 };

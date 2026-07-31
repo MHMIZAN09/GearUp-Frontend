@@ -1,5 +1,6 @@
 'use server';
 
+
 export const getAllGears = async () => {
   const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear`, {
     cache: 'no-store',
@@ -8,6 +9,7 @@ export const getAllGears = async () => {
 
   const result = await res.json();
   // console.log('result', result);
+
   return result;
 };
 

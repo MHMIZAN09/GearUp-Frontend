@@ -26,6 +26,6 @@ export const getMe = async () => {
   });
 
   const result = await res.json();
-  console.log('getMe result:', result);
+  // console.log('getMe result:', result);
   return result;
 };

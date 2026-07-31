@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Button } from '@/components/ui/button';
 import { Compass, Home, Search } from 'lucide-react';
 import Link from 'next/link';
@@ -17,11 +18,11 @@ export default function NotFound() {
 
       {/* Heading & Description */}
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-3">
-        Looks like you&apos;re off the trail!
+        Looks like you're off the trail!
       </h1>
       <p className="text-muted-foreground max-w-md mb-8 leading-relaxed text-sm sm:text-base">
-        The gear listing, category, or page you are looking for doesn&apos;t exist, has been moved,
-        or is temporarily unavailable.
+        The gear listing, category, or page you are looking for doesn't exist, has been moved, or is
+        temporarily unavailable.
       </p>
 
       {/* Action Buttons */}
