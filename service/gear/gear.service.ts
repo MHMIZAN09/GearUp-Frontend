@@ -1,25 +1,43 @@
 'use server';
 
+export const getAllGears = async ({
+  query,
+}: {
+  query?: { [key: string]: string | string[] | undefined };
+}) => {
+  const params = new URLSearchParams();
 
-export const getAllGears = async () => {
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear`, {
-    cache: 'no-store',
-    next: { tags: ['gears'] },
+  if (!query) {
+    query = {};
+  }
+
+  Object.entries(query).forEach(([key, value]) => {
+    if (!value) return;
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => params.append(key, v));
+    } else {
+      params.set(key, value);
+    }
   });
 
-  const result = await res.json();
-  // console.log('result', result);
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear?${params.toString()}`, {
+    cache: 'no-store',
+    next: {
+      tags: ['gears'],
+    },
+  });
 
-  return result;
+  return res.json();
 };
 
 export const getGearById = async (id: string) => {
   const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear/${id}`, {
     cache: 'no-store',
-    next: { tags: ['gears'] },
+    next: {
+      tags: ['gears'],
+    },
   });
 
-  const result = await res.json();
-  // console.log('result', result);
-  return result;
+  return res.json();
 };

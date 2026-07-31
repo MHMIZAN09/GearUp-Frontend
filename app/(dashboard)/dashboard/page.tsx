@@ -1,5 +1,7 @@
+import { CustomerAnalyticsDashboard } from '../_components/analytics/customer-analytics-dashboard';
+
 const CustomerDashboardPage = () => {
-  return <div>CustomerDashboardPage</div>;
+  return <CustomerAnalyticsDashboard />;
 };
 
 export default CustomerDashboardPage;

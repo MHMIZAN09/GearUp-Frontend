@@ -84,8 +84,8 @@ export const sidebarItems = {
       },
 
       {
-        title: 'Bookings',
-        url: '/dashboard/bookings',
+        title: 'Rentals',
+        url: '/dashboard/rentals',
         icon: Calendar,
       },
 
