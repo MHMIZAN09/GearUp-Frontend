@@ -13,6 +13,7 @@ import {
 
 import { Badge } from '@/components/ui/badge';
 
+import Pagination from '../../../../components/shared/Pagination';
 import { CategoryFormDialog } from './category-form-dialog';
 import DeleteCategoryButton from './DeleteCategoryButton';
 
@@ -30,48 +31,51 @@ export async function CategoryList() {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
+    <>
+      <div className="overflow-hidden rounded-xl border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
 
-            <TableHead>Description</TableHead>
+              <TableHead>Description</TableHead>
 
-            <TableHead>Gear</TableHead>
+              <TableHead>Gear</TableHead>
 
-            <TableHead>Created</TableHead>
+              <TableHead>Created</TableHead>
 
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {result?.data?.map((category: any) => (
-            <TableRow key={category.id}>
-              <TableCell className="font-semibold">{category.name}</TableCell>
-
-              <TableCell className="max-w-sm truncate text-muted-foreground">
-                {category.description || '-'}
-              </TableCell>
-
-              <TableCell>
-                <Badge variant="secondary">{category._count.gearItems}</Badge>
-              </TableCell>
-
-              <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>
-
-              <TableCell>
-                <div className="flex justify-end gap-2">
-                  <CategoryFormDialog mode="edit" category={category} />
-
-                  <DeleteCategoryButton id={category.id} />
-                </div>
-              </TableCell>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+
+          <TableBody>
+            {result?.data?.map((category: any) => (
+              <TableRow key={category.id}>
+                <TableCell className="font-semibold">{category.name}</TableCell>
+
+                <TableCell className="max-w-sm truncate text-muted-foreground">
+                  {category.description || '-'}
+                </TableCell>
+
+                <TableCell>
+                  <Badge variant="secondary">{category._count.gearItems}</Badge>
+                </TableCell>
+
+                <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>
+
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <CategoryFormDialog mode="edit" category={category} />
+
+                    <DeleteCategoryButton id={category.id} />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <Pagination meta={result.meta} />
+    </>
   );
 }

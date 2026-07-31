@@ -51,7 +51,7 @@ export const sidebarItems = {
 
       {
         title: 'My Gear',
-        url: '/provider-dashboard/gear',
+        url: '/provider-dashboard/gears',
         icon: Folder,
       },
 

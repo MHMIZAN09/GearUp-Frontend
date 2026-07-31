@@ -89,7 +89,7 @@ export async function getProviderRentals() {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rentals/provider`, {
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/provider/rentals`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

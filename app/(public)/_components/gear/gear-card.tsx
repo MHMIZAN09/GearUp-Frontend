@@ -1,5 +1,4 @@
 import { ArrowUpRight, Boxes, PackageCheck, Tag, UserRound } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -41,12 +40,10 @@ export function GearCard({ gear }: GearCardProps) {
   return (
     <Card className="group overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-[1.15] overflow-hidden bg-muted">
-        <Image
+        <img
           src={gear.imageUrl}
           alt={gear.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/10" />

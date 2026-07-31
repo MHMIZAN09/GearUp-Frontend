@@ -8,7 +8,6 @@ import {
   Tag,
   UserRound,
 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -191,7 +190,7 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
               {gearItems.map((gear) => {
                 const availabilityPercent = getAvailabilityPercent(
                   gear.quantityAvailable,
-                  gear.quantityTotal
+                  gear.quantityTotal,
                 );
 
                 return (
@@ -200,10 +199,9 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
                     className="group p-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                      <Image
+                      <img
                         src={gear.imageUrl}
                         alt={gear.name}
-                        fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
