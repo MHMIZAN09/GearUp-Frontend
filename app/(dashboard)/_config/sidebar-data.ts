@@ -38,9 +38,9 @@ export const sidebarItems = {
         icon: BarChart,
       },
       {
-        title: 'Analytics',
-        url: '/admin-dashboard/analytics',
-        icon: BarChart,
+        title: 'Reviews',
+        url: '/admin-dashboard/reviews',
+        icon: Star,
       },
     ],
   },
@@ -101,7 +101,7 @@ export const sidebarItems = {
 
       {
         title: 'Reviews',
-        url: '/dashboard/reviews',
+        url: '/dashboard/reviews/my-reviews',
         icon: Star,
       },
     ],

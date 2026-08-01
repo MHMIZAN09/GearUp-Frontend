@@ -15,6 +15,7 @@ import {
 
 import { getCustomerRentals } from '../../_actions/rental.actions';
 import PaymentButton from '../../_components/payments/payment-button';
+import ReviewButton from '../../_components/reviews/review-button';
 
 const CustomerRentalsPage = async () => {
   const result = await getCustomerRentals();
@@ -120,6 +121,13 @@ const CustomerRentalsPage = async () => {
                         <Button asChild variant="outline" size="sm">
                           <Link href={`/gear/${rental.rentalItems?.[0]?.gearItem?.id}`}>View</Link>
                         </Button>
+
+                        {paymentStatus === 'PAID' && (
+                          <ReviewButton
+                            rentalOrderId={rental.id}
+                            gearItemId={rental.rentalItems[0].gearItem.id}
+                          />
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

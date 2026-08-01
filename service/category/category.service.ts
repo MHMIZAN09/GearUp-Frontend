@@ -2,8 +2,8 @@
 
 export const getAllCategories = async () => {
   const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/category`, {
-    cache: 'no-store',
-    next: { tags: ['categories'] },
+    cache: 'force-cache',
+    next: { revalidate: 60, tags: ['categories'] },
   });
 
   const result = await res.json();
@@ -13,8 +13,8 @@ export const getAllCategories = async () => {
 
 export const getCategoryById = async (id: string) => {
   const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/category/${id}`, {
-    cache: 'no-store',
-    next: { tags: ['categories'] },
+    cache: 'force-cache',
+    next: { revalidate: 60, tags: ['categories'] },
   });
 
   const result = await res.json();

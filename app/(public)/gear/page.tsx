@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
 import { BadgeCheck, Boxes, Compass, Search } from 'lucide-react';
+import { Suspense } from 'react';
 
 import CategorySearch from '../_components/category/category-search';
 import { GearList } from '../_components/gear/gear-list';

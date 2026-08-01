@@ -17,6 +17,7 @@ export async function GearList({
   const gears = result?.data ?? [];
   const meta = result.meta;
 
+
   if (!gears?.length) {
     return (
       <div className="rounded-2xl border bg-card px-6 py-16 text-center shadow-sm">
