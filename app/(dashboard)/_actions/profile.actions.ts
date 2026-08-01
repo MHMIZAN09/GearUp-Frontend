@@ -37,7 +37,7 @@ export async function getUserProfile() {
   });
 
   const result = await res.json();
-  console.log('result', result);
+  // console.log('result', result);
   return result;
 }
 

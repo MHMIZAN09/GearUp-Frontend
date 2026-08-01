@@ -32,6 +32,16 @@ export const sidebarItems = {
         url: '/admin-dashboard/rentals',
         icon: Calendar,
       },
+      {
+        title: 'Payments',
+        url: '/admin-dashboard/payments',
+        icon: BarChart,
+      },
+      {
+        title: 'Analytics',
+        url: '/admin-dashboard/analytics',
+        icon: BarChart,
+      },
     ],
   },
 

@@ -177,3 +177,32 @@ export const cancelRental = async (rentalId: string) => {
   console.log('result', result);
   return result;
 };
+
+
+// admin
+
+export const getAllRentals = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+
+  if (!accessToken) {
+    return {
+      success: false,
+      statusCode: 401,
+      message: 'User is not authenticated. Access token is missing.',
+    };
+  }
+
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/rentals`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      cookie: `accessToken=${accessToken}`,
+    },
+    cache: 'no-store', // Ensure fresh data is fetched on each request
+  });
+
+  const result = await res.json();
+  // console.log('result', result);
+  return result;
+}
