@@ -34,7 +34,7 @@ export async function createRental(formData: FormData) {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rentals`, {
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rental`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -178,7 +178,6 @@ export const cancelRental = async (rentalId: string) => {
   return result;
 };
 
-
 // admin
 
 export const getAllRentals = async () => {
@@ -205,4 +204,4 @@ export const getAllRentals = async () => {
   const result = await res.json();
   // console.log('result', result);
   return result;
-}
+};
