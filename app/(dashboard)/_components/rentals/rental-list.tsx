@@ -1,8 +1,5 @@
 'use client';
 
-import { Eye, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-
 import {
   Table,
   TableBody,
@@ -13,7 +10,6 @@ import {
 } from '@/components/ui/table';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 
 type Rental = {
   id: string;
@@ -54,7 +50,7 @@ export default function RentalList({ rentals }: Props) {
             <TableHead>Payment</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Created</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            {/* <TableHead className="text-right">Actions</TableHead> */}
           </TableRow>
         </TableHeader>
 
@@ -120,20 +116,6 @@ export default function RentalList({ rentals }: Props) {
                 </TableCell>
 
                 <TableCell>{new Date(rental.createdAt).toLocaleDateString()}</TableCell>
-
-                <TableCell>
-                  <div className="flex justify-end gap-2">
-                    <Button asChild size="icon" variant="outline">
-                      <Link href={`/admin-dashboard/rentals/${rental.id}`}>
-                        <Eye className="h-4 w-4" />
-                      </Link>
-                    </Button>
-
-                    <Button size="icon" variant="destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
               </TableRow>
             ))
           )}

@@ -3,7 +3,18 @@
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
-export const getAllReviews = async () => {};
+export const getAllReviews = async () => {
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/review`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+  });
+
+  const result = await res.json();
+  return result;
+};
 
 export const getMyReviews = async () => {
   const cookieStore = await cookies();
