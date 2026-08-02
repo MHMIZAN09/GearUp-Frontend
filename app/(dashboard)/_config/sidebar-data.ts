@@ -1,4 +1,4 @@
-import { BarChart, Calendar, Folder, LayoutDashboard, Star, User, Users } from 'lucide-react';
+import { BarChart, Calendar, CreditCard, Folder, LayoutDashboard, Star, User, Users } from 'lucide-react';
 
 export const sidebarItems = {
   ADMIN: {
@@ -98,7 +98,11 @@ export const sidebarItems = {
         url: '/dashboard/rentals',
         icon: Calendar,
       },
-
+      {
+        title: 'Payments',
+        url: '/dashboard/payments',
+        icon: CreditCard,
+      },
       {
         title: 'Reviews',
         url: '/dashboard/reviews/my-reviews',

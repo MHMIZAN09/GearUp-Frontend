@@ -1,5 +1,5 @@
-const AdminDashboardPage = () => {
-  return <div>AdminDashboardPage</div>;
-};
+import { AdminAnalyticsDashboard } from '../_components/analytics/admin-analytics-dashboard';
 
-export default AdminDashboardPage;
+export default function AdminDashboardPage() {
+  return <AdminAnalyticsDashboard />;
+}
