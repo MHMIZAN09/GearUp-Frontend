@@ -1,5 +1,5 @@
-const ProviderDashboardPage = () => {
-  return <div>ProviderDashboardPage</div>;
-};
+import ProviderAnalyticsDashboard from '../_components/analytics/provider-analytics-dashboard';
 
-export default ProviderDashboardPage;
+export default function ProviderDashboardPage() {
+  return <ProviderAnalyticsDashboard />;
+}

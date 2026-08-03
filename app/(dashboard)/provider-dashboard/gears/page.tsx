@@ -1,5 +1,8 @@
-const ProviderGearsPage = () => {
-  return <div>ProviderGearsPage</div>;
-};
 
-export default ProviderGearsPage;
+const GearsPage = () => {
+  return (
+    <div>GearsPage</div>
+  )
+}
+
+export default GearsPage

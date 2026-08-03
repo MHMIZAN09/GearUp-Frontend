@@ -1,7 +1,8 @@
 'use client';
 
-import { CommandIcon } from 'lucide-react';
 import * as React from 'react';
+import Link from 'next/link';
+import { CommandIcon } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -14,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import Link from 'next/link';
+
 import { sidebarItems } from '../app/(dashboard)/_config/sidebar-data';
 
 interface IUser {
@@ -27,20 +28,10 @@ interface IUser {
 export function AppSidebar({
   user,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { user: IUser }) {
-  const navItems = sidebarItems[user.role]?.navMain || [];
-
-  const navItemsForNavMain = navItems.map(({ title, url, icon }) => ({
-    title,
-    url,
-    icon: React.createElement(icon),
-  }));
-
-  const safeNavUser = {
-    name: user.name,
-    email: user.email,
-    profilePhoto: user.profilePhoto ?? '',
-  };
+}: React.ComponentProps<typeof Sidebar> & {
+  user: IUser;
+}) {
+  const navItems = sidebarItems[user.role]?.navMain ?? [];
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -48,8 +39,8 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
-              <Link href="#">
-                <CommandIcon className="size-5!" />
+              <Link href={`/${user.role.toLowerCase()}-dashboard`}>
+                <CommandIcon className="size-5" />
                 <span className="text-base font-semibold">{user.role} Dashboard</span>
               </Link>
             </SidebarMenuButton>
@@ -58,11 +49,17 @@ export function AppSidebar({
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={navItemsForNavMain} />
+        <NavMain items={navItems} />
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={safeNavUser} />
+        <NavUser
+          user={{
+            name: user.name,
+            email: user.email,
+            profilePhoto: user.profilePhoto ?? '',
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   );

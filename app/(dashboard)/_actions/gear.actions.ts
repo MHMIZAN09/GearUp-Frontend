@@ -59,7 +59,7 @@ export async function getMyGearById(id: string) {
 }
 
 // Create Gear
-export async function createGear(formData: FormData) {
+export async function createGear(prevState: unknown, formData: FormData) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
@@ -101,7 +101,7 @@ export async function createGear(formData: FormData) {
 }
 
 // Update Gear
-export async function updateGear(id: string, formData: FormData) {
+export async function updateGear(id: string, prevState: unknown, formData: FormData) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
@@ -173,7 +173,7 @@ export async function deleteGear(id: string) {
 }
 
 // Update Stock
-export async function updateGearStock(id: string, quantityAvailable: number) {
+export async function updateGearStock(id: string, prevState: unknown, formData: FormData) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
@@ -184,6 +184,8 @@ export async function updateGearStock(id: string, quantityAvailable: number) {
       message: 'User is not authenticated. Access token is missing.',
     };
   }
+
+  const quantityAvailable = Number(formData.get('quantityAvailable'));
 
   const res = await fetch(`${BASE_URL}/${id}/stock`, {
     method: 'PATCH',
@@ -204,7 +206,7 @@ export async function updateGearStock(id: string, quantityAvailable: number) {
 }
 
 // Update Status
-export async function updateGearStatus(id: string, status: string) {
+export async function updateGearStatus(id: string, prevState: unknown, formData: FormData) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
@@ -215,6 +217,8 @@ export async function updateGearStatus(id: string, status: string) {
       message: 'User is not authenticated. Access token is missing.',
     };
   }
+
+  const status = formData.get('status') as string;
 
   const res = await fetch(`${BASE_URL}/${id}/status`, {
     method: 'PATCH',

@@ -84,12 +84,6 @@ export const sidebarItems = {
         url: '/provider-dashboard/rentals',
         icon: Calendar,
       },
-
-      {
-        title: 'Analytics',
-        url: '/provider-dashboard/analytics',
-        icon: BarChart,
-      },
     ],
   },
 
