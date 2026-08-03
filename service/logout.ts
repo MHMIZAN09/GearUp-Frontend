@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
 export const logout = async () => {
@@ -8,8 +7,4 @@ export const logout = async () => {
 
   cookieStore.delete('accessToken');
   cookieStore.delete('refreshToken');
-
-  revalidateTag('getMe', {
-    expire: 0,
-  });
 };

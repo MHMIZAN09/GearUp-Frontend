@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -102,8 +103,7 @@ export async function getProviderRentals() {
   return result;
 }
 
-export async function confirmRental(formData: FormData) {
-  const rentalId = formData.get('rentalId');
+export async function confirmRental(rentalId: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
@@ -115,15 +115,22 @@ export async function confirmRental(formData: FormData) {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rentals/${rentalId}/confirm`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      cookie: `accessToken=${accessToken}`,
+  const res = await fetch(
+    `${process.env.BACKEND_URL_LOCAL}/api/provider/rentals/${rentalId}/confirm`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: `accessToken=${accessToken}`,
+      },
     },
-  });
+  );
 
   const result = await res.json();
+  if (result.success) {
+    revalidatePath('/provider-dashboard/rentals');
+    revalidatePath('/dashboard/provider-dashboard/rentals');
+  }
   return result;
 }
 
@@ -139,7 +146,7 @@ export const getRentalById = async (rentalId: string) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rentals/${rentalId}`, {
+  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/provider/rentals/${rentalId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -202,7 +209,6 @@ export const getAllRentals = async () => {
   });
 
   const result = await res.json();
-  // console.log('result', result);
   return result;
 };
 
@@ -229,6 +235,41 @@ export const updateRentalStatusByAdmin = async (rentalId: string, status: string
   });
 
   const result = await res.json();
-  // console.log('result', result);
+  if (result.success) {
+    revalidatePath('/admin-dashboard/rentals');
+    revalidatePath('/dashboard/admin-dashboard/rentals');
+  }
+  return result;
+};
+
+export const updateRentalStatusByProvider = async (rentalId: string, status: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+
+  if (!accessToken) {
+    return {
+      success: false,
+      statusCode: 401,
+      message: 'User is not authenticated. Access token is missing.',
+    };
+  }
+
+  const res = await fetch(
+    `${process.env.BACKEND_URL_LOCAL}/api/provider/rentals/${rentalId}/status`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: `accessToken=${accessToken}`,
+      },
+      body: JSON.stringify({ status }),
+    },
+  );
+
+  const result = await res.json();
+  if (result.success) {
+    revalidatePath('/provider-dashboard/rentals');
+    revalidatePath('/dashboard/provider-dashboard/rentals');
+  }
   return result;
 };

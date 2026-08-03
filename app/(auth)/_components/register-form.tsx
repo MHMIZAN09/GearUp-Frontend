@@ -1,16 +1,6 @@
 'use client';
 
-import {
-  ArrowRight,
-  Dumbbell,
-  Eye,
-  EyeOff,
-  Lock,
-  Mail,
-  ShieldCheck,
-  Store,
-  User,
-} from 'lucide-react';
+import { Dumbbell, Eye, EyeOff, Lock, Mail, ShieldCheck, Store, User } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -161,8 +151,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
                   type="submit"
                   className="w-full h-10 font-semibold shadow-md shadow-primary/15 transition-all gap-2 cursor-pointer"
                 >
-                  Create Account
-                  <ArrowRight className="h-4 w-4" />
+                  {pending ? 'Creating Account...' : 'Create Account'}
                 </Button>
               </Field>
 

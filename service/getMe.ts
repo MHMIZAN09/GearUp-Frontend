@@ -21,8 +21,7 @@ export const getMe = async () => {
       'Content-Type': 'application/json',
       cookie: `accessToken=${accessToken}`,
     },
-    cache: 'force-cache',
-    next: { revalidate: 60 * 60 * 24, tags: ['getMe'] },
+    cache: 'no-store',
   });
 
   const result = await res.json();

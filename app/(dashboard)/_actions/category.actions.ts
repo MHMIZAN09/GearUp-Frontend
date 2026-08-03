@@ -34,7 +34,6 @@ export async function createCategory(prevState: any, formData: FormData) {
       cookie: `accessToken=${accessToken}`,
     },
     cache: 'no-store',
-    next: { tags: ['categories'] },
     body: JSON.stringify(payload),
   });
 
@@ -109,7 +108,6 @@ export async function deleteCategory(id: string) {
       cookie: `accessToken=${accessToken}`,
     },
     cache: 'no-store',
-    next: { tags: ['categories'] },
   });
 
   const result = await res.json();

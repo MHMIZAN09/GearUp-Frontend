@@ -24,6 +24,7 @@ export const getAllGears = async ({
   const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear?${params.toString()}`, {
     cache: 'force-cache',
     next: {
+      revalidate: 60,
       tags: ['gears'],
     },
   });
@@ -35,6 +36,7 @@ export const getGearById = async (id: string) => {
   const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear/${id}`, {
     cache: 'force-cache',
     next: {
+      revalidate: 60,
       tags: ['gears'],
     },
   });

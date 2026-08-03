@@ -94,7 +94,7 @@ export async function createGear(prevState: unknown, formData: FormData) {
   const result = await res.json();
 
   if (result.success) {
-    revalidateTag('provider-gears', { expire: 0 });
+    revalidateTag('gears', { expire: 0 });
   }
 
   return result;
@@ -135,7 +135,7 @@ export async function updateGear(id: string, prevState: unknown, formData: FormD
   const result = await res.json();
 
   if (result.success) {
-    revalidateTag('provider-gears', { expire: 0 });
+    revalidateTag('gears', { expire: 0 });
   }
 
   return result;
@@ -166,7 +166,7 @@ export async function deleteGear(id: string) {
   // console.log('result', result);
 
   if (result.success) {
-    revalidateTag('provider-gears', { expire: 0 });
+    revalidateTag('gears', { expire: 0 });
   }
 
   return result;
@@ -185,7 +185,7 @@ export async function updateGearStock(id: string, prevState: unknown, formData: 
     };
   }
 
-  const quantityAvailable = Number(formData.get('quantityAvailable'));
+  const quantity = Number(formData.get('quantity'));
 
   const res = await fetch(`${BASE_URL}/${id}/stock`, {
     method: 'PATCH',
@@ -194,13 +194,13 @@ export async function updateGearStock(id: string, prevState: unknown, formData: 
       cookie: `accessToken=${accessToken}`,
     },
     body: JSON.stringify({
-      quantityAvailable,
+      quantity,
     }),
   });
 
   const result = await res.json();
   if (result.success) {
-    revalidateTag('provider-gears', { expire: 0 });
+    revalidateTag('gears', { expire: 0 });
   }
   return result;
 }
@@ -233,7 +233,7 @@ export async function updateGearStatus(id: string, prevState: unknown, formData:
 
   const result = await res.json();
   if (result.success) {
-    revalidateTag('provider-gears', { expire: 0 });
+    revalidateTag('gears', { expire: 0 });
   }
   return result;
 }
