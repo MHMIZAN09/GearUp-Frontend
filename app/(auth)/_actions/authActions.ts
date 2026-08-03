@@ -3,17 +3,8 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-type LoginActionState = {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-  };
-};
 
-export const loginAction = async (prevState: LoginActionState, formData: FormData) => {
+export const loginAction = async (prevState: unknown, formData: FormData) => {
   const email = formData.get('email');
   const password = formData.get('password');
   console.log(process.env.BACKEND_API_URL);
@@ -62,7 +53,7 @@ export const loginAction = async (prevState: LoginActionState, formData: FormDat
   return result;
 };
 
-export const registerAction = async (formData: FormData) => {
+export const registerAction = async (prevState: unknown, formData: FormData) => {
   const name = formData.get('name');
   const email = formData.get('email');
   const password = formData.get('password');

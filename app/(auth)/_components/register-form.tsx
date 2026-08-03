@@ -1,8 +1,10 @@
 'use client';
 
 import { Dumbbell, Eye, EyeOff, Lock, Mail, ShieldCheck, Store, User } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,16 +16,24 @@ import { registerAction } from '../_actions/authActions';
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'CUSTOMER' | 'PROVIDER'>('CUSTOMER');
+  const [state, action, pending] = useActionState(registerAction, false);
+
+  useEffect(() => {
+    if (!state) return;
+
+    if (state.success) {
+      toast.success(state.message || 'Registration successful!');
+    } else {
+      toast.error(state.message || 'Registration failed. Please try again.');
+    }
+  }, [state]);
 
   return (
     <div className={cn('flex flex-col gap-6 w-full max-w-4xl mx-auto', className)} {...props}>
       <Card className="overflow-hidden border-border/50 shadow-xl rounded-2xl p-0 bg-card">
         <CardContent className="grid p-0 md:grid-cols-2">
           {/* Left Column: Interactive Form */}
-          <form
-            action={registerAction}
-            className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between"
-          >
+          <form action={action} className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
             <FieldGroup className="gap-4">
               {/* Brand Header */}
               <div className="flex flex-col items-center text-center gap-1.5 mb-1">
@@ -170,9 +180,11 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
 
           {/* Right Column: Outdoor/Sports Visual Showcase */}
           <div className="relative hidden bg-zinc-900 md:block overflow-hidden">
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80"
               alt="GearUp Sports Equipment"
+              fill
+              sizes="50vw"
               className="absolute inset-0 h-full w-full object-cover opacity-80 mix-blend-overlay transition-transform duration-700 hover:scale-105"
             />
             {/* Dark Gradient Overlay */}

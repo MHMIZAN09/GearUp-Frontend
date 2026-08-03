@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { loginAction } from '../_actions/authActions';
 

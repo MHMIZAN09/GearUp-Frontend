@@ -1,4 +1,3 @@
-import { getAllReviews } from '../(dashboard)/_actions/reviews.actions';
 import Hero from '../../components/shared/Hero';
 
 const HomePage = async () => {
