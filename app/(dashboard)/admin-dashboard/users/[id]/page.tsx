@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getUserById } from '../../../_actions/users.actions';
+import { AdminPageHeader } from '../../../_components/admin/admin-page-header';
 
 type Props = {
   params: Promise<{
@@ -15,8 +16,6 @@ export default async function UserDetailsPage({ params }: Props) {
   const { id } = await params;
 
   const result = await getUserById(id);
-  console.log('User Details Result:', result);
-
   if (!result.success) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-12">
@@ -30,12 +29,15 @@ export default async function UserDetailsPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">User Details</h1>
-        <p className="text-muted-foreground">View complete information about this user.</p>
-      </div>
+      <AdminPageHeader
+        eyebrow="People & access"
+        title="User details"
+        description="Review identity, contact information, role, and account activity for this user."
+        icon={UserCircle}
+        metric={{ label: 'Account status', value: result.data.status }}
+      />
 
-      <Card>
+      <Card className="overflow-hidden rounded-3xl shadow-sm">
         <CardContent className="flex flex-col items-center gap-5 p-8 md:flex-row">
           <Image
             src={user?.profilePhoto || ''}

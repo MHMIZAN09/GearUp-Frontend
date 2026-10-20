@@ -6,6 +6,7 @@ type Category = {
   id: string;
   name: string;
   description?: string;
+  gearItemCount?: number;
   _count?: {
     gearItems: number;
   };
@@ -29,7 +30,7 @@ export async function CategoryList() {
             id={category.id}
             name={category.name}
             description={category.description}
-            gearCount={category._count?.gearItems ?? 0}
+            gearCount={category.gearItemCount ?? category._count?.gearItems ?? 0}
           />
         ))}
       </div>

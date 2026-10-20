@@ -18,6 +18,12 @@ import {
 
 import { sidebarItems } from '../app/(dashboard)/_config/sidebar-data';
 
+const dashboardPaths = {
+  ADMIN: '/admin-dashboard',
+  PROVIDER: '/provider-dashboard',
+  CUSTOMER: '/dashboard',
+} as const;
+
 interface IUser {
   name: string;
   email: string;
@@ -39,7 +45,7 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
-              <Link href={`/${user.role.toLowerCase()}-dashboard`}>
+              <Link href={dashboardPaths[user.role]}>
                 <CommandIcon className="size-5" />
                 <span className="text-base font-semibold">{user.role} Dashboard</span>
               </Link>

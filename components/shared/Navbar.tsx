@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { LayoutDashboard, LogOut, Menu, PackageCheck, Settings, User } from 'lucide-react';
@@ -66,6 +67,17 @@ const defaultUserMenuItems = [
   { label: 'Settings', action: '/settings', icon: Settings },
 ];
 
+const getDashboardPath = (role?: string) => {
+  switch (role?.toUpperCase()) {
+    case 'ADMIN':
+      return '/admin-dashboard';
+    case 'PROVIDER':
+      return '/provider-dashboard';
+    default:
+      return '/dashboard';
+  }
+};
+
 export const Navbar = ({
   logo = {
     url: '/',
@@ -89,6 +101,11 @@ export const Navbar = ({
   className,
 }: NavbarProps) => {
   const router = useRouter();
+  const userMenuItems = defaultUserMenuItems.map((item) =>
+    item.label === 'Dashboard'
+      ? { ...item, action: getDashboardPath(user?.data?.role) }
+      : item,
+  );
 
   const handleUserMenuAction = (action: string) => {
     router.push(action);
@@ -162,7 +179,7 @@ export const Navbar = ({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {defaultUserMenuItems.map((item) => {
+                  {userMenuItems.map((item) => {
                     const Icon = item.icon;
                     return (
                       <DropdownMenuItem
@@ -265,7 +282,7 @@ export const Navbar = ({
                         <span className="text-xs text-muted-foreground">{user.data?.email}</span>
                       </div>
                     </div>
-                    {defaultUserMenuItems.map((item) => {
+                    {userMenuItems.map((item) => {
                       const Icon = item.icon;
                       return (
                         <Button

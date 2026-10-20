@@ -1,7 +1,7 @@
 'use client';
 
 import { differenceInCalendarDays } from 'date-fns';
-import { CheckCircle2, Clock, Send } from 'lucide-react';
+import { CalendarDays, CheckCircle2, Minus, Plus, Send, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState, useTransition } from 'react';
 
@@ -12,14 +12,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { createRental } from '../../_actions/rental.actions';
+import { useRouter } from 'next/navigation';
 
 interface RentalFormProps {
   gearId: string;
   pricePerDay: number;
   quantityAvailable: number;
+  isAuthenticated: boolean;
 }
 
-export default function RentalForm({ gearId, pricePerDay, quantityAvailable }: RentalFormProps) {
+export default function RentalForm({
+  gearId,
+  pricePerDay,
+  quantityAvailable,
+  isAuthenticated,
+}: RentalFormProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
@@ -31,6 +39,12 @@ export default function RentalForm({ gearId, pricePerDay, quantityAvailable }: R
 
   const [notes, setNotes] = useState('');
 
+  const minimumDate = useMemo(() => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    return new Date(today.getTime() - offset * 60 * 1000).toISOString().split('T')[0];
+  }, []);
+
   const totalDays = useMemo(() => {
     if (!startDate || !endDate) return 0;
 
@@ -40,8 +54,12 @@ export default function RentalForm({ gearId, pricePerDay, quantityAvailable }: R
   }, [startDate, endDate]);
 
   const totalPrice = totalDays * quantity * pricePerDay;
-
   function handleSubmit(formData: FormData) {
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+
     setMessage('');
     setIsSuccess(false);
 
@@ -63,70 +81,147 @@ export default function RentalForm({ gearId, pricePerDay, quantityAvailable }: R
   }
 
   return (
-    <Card className="shadow-sm">
-      <CardContent className="space-y-6 p-6">
-        <div>
-          <h2 className="text-xl font-semibold">Request this rental</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Submit your dates first. The provider confirms availability before payment.
-          </p>
+    <Card className="overflow-hidden border-primary/15 shadow-lg shadow-primary/5">
+      <div className="border-b bg-gradient-to-br from-primary/10 via-background to-background px-6 py-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              <CalendarDays className="size-4" />
+              Check availability
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight">Plan your rental</h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Choose your dates and send a request to the provider.
+            </p>
+          </div>
+          <div className="hidden size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/20 sm:flex">
+            <ShieldCheck className="size-5" />
+          </div>
         </div>
+      </div>
 
-        <div className="grid gap-3 rounded-xl border bg-muted/30 p-4 text-sm">
+      <CardContent className="space-y-6 p-6">
+        <div className="grid gap-3 sm:grid-cols-3">
           <div className="flex items-center gap-2">
-            <Send className="size-4 text-primary" />
-            <span>Customer sends request</span>
+            <span className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              1
+            </span>
+            <span className="text-sm font-medium">Choose dates</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="size-4 text-amber-600" />
-            <span>Provider confirms request</span>
+            <span className="flex size-7 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">
+              2
+            </span>
+            <span className="text-sm font-medium">Get approval</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="size-4 text-emerald-600" />
-            <span>Payment button appears in your rentals</span>
+            <span className="flex size-7 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
+              3
+            </span>
+            <span className="text-sm font-medium">Pay securely</span>
           </div>
         </div>
 
         <form action={handleSubmit} className="space-y-6">
           <input type="hidden" name="gearId" value={gearId} />
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <Label>Start Date</Label>
-
-              <Input
-                type="date"
-                name="startDate"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+          <div className="rounded-2xl border bg-muted/20 p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="font-semibold">When do you need it?</p>
+                <p className="text-xs text-muted-foreground">Select a minimum one-day rental.</p>
+              </div>
+              <CalendarDays className="size-5 text-primary" />
             </div>
 
-            <div>
-              <Label>End Date</Label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="start-date">Start date</Label>
+                <div className="relative">
+                  <CalendarDays className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="start-date"
+                    type="date"
+                    name="startDate"
+                    min={minimumDate}
+                    value={startDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      if (endDate && e.target.value >= endDate) {
+                        setEndDate('');
+                      }
+                    }}
+                    className="h-11 pl-10"
+                    required={isAuthenticated}
+                  />
+                </div>
+              </div>
 
-              <Input
-                type="date"
-                name="endDate"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="end-date">Return date</Label>
+                <div className="relative">
+                  <CalendarDays className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="end-date"
+                    type="date"
+                    name="endDate"
+                    min={startDate || minimumDate}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="h-11 pl-10"
+                    required={isAuthenticated}
+                  />
+                </div>
+              </div>
             </div>
+
+            <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <CheckCircle2 className="size-3.5 text-emerald-600" />
+              Return the gear by the selected return date.
+            </p>
           </div>
 
-          <div>
-            <Label>Quantity</Label>
-
-            <Input
-              type="number"
-              name="quantity"
-              min={1}
-              max={quantityAvailable}
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-
-            <p className="text-sm text-muted-foreground">Available: {quantityAvailable}</p>
+          <div className="flex items-center justify-between rounded-2xl border p-4">
+            <div>
+              <Label htmlFor="quantity">How many?</Label>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {quantityAvailable} available right now
+              </p>
+            </div>
+            <div className="flex items-center gap-2 rounded-xl border bg-muted/30 p-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Decrease quantity"
+                disabled={quantity <= 1}
+                onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+              >
+                <Minus className="size-4" />
+              </Button>
+              <Input
+                id="quantity"
+                type="number"
+                name="quantity"
+                min={1}
+                max={quantityAvailable}
+                value={quantity}
+                onChange={(e) =>
+                  setQuantity(Math.min(quantityAvailable, Math.max(1, Number(e.target.value) || 1)))
+                }
+                className="h-8 w-12 border-0 bg-transparent p-0 text-center font-semibold shadow-none focus-visible:ring-0"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Increase quantity"
+                disabled={quantity >= quantityAvailable}
+                onClick={() => setQuantity((value) => Math.min(quantityAvailable, value + 1))}
+              >
+                <Plus className="size-4" />
+              </Button>
+            </div>
           </div>
 
           <div>
@@ -140,29 +235,31 @@ export default function RentalForm({ gearId, pricePerDay, quantityAvailable }: R
             />
           </div>
 
-          <div className="space-y-2 rounded-lg border p-4">
-            <div className="flex justify-between">
-              <span>Price / Day</span>
-
-              <span>৳ {pricePerDay}</span>
+          <div className="space-y-3 rounded-2xl border bg-muted/20 p-5">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">৳ {pricePerDay} × {totalDays || 0} day{totalDays === 1 ? '' : 's'}</span>
+              <span>৳ {pricePerDay * (totalDays || 0)}</span>
             </div>
-
-            <div className="flex justify-between">
-              <span>Total Days</span>
-
-              <span>{totalDays}</span>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Quantity</span>
+              <span>× {quantity}</span>
             </div>
-
-            <div className="flex justify-between">
-              <span>Quantity</span>
-
-              <span>{quantity}</span>
+            <div className="flex items-end justify-between border-t pt-4">
+              <div>
+                <p className="text-sm font-semibold">Estimated total</p>
+                <p className="text-xs text-muted-foreground">Payment after provider approval</p>
+              </div>
+              <span className="text-3xl font-bold text-primary">৳ {totalPrice}</span>
             </div>
+          </div>
 
-            <div className="flex justify-between border-t pt-3 font-bold">
-              <span>Total</span>
-
-              <span>৳ {totalPrice}</span>
+          <div className="rounded-xl bg-primary/5 px-4 py-3 text-xs leading-5 text-muted-foreground">
+            <div className="flex gap-2">
+              <Send className="mt-0.5 size-4 shrink-0 text-primary" />
+              <span>
+                Send your request now. The provider confirms availability first, then payment
+                becomes available in your rentals.
+              </span>
             </div>
           </div>
 
@@ -185,9 +282,9 @@ export default function RentalForm({ gearId, pricePerDay, quantityAvailable }: R
 
           <Button
             className="h-10 w-full rounded-full"
-            disabled={isPending || !startDate || !endDate || totalDays <= 0}
+            disabled={isPending || (isAuthenticated && (!startDate || !endDate || totalDays <= 0))}
           >
-            {isPending ? 'Sending request...' : 'Rent Now'}
+            {isPending ? 'Sending request...' : isAuthenticated ? 'Rent Now' : 'Login to Rent'}
           </Button>
         </form>
       </CardContent>

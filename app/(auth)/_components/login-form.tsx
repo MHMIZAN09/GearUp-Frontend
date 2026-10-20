@@ -1,8 +1,8 @@
 'use client';
 
-import { Dumbbell, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
+import { Crown, Dumbbell, Eye, EyeOff, Lock, Mail, ShieldCheck, Store } from 'lucide-react';
 import Link from 'next/link';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect, useState, useTransition } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,11 +10,23 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { loginAction } from '../_actions/authActions';
+import { demoLoginAction, loginAction } from '../_actions/authActions';
 
-export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+type LoginFormProps = React.ComponentProps<'div'> & {
+  demoAvailability?: {
+    admin: boolean;
+    provider: boolean;
+  };
+};
+
+export function LoginForm({
+  className,
+  demoAvailability = { admin: false, provider: false },
+  ...props
+}: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [state, action, pending] = useActionState(loginAction, false);
+  const [demoPending, startDemoTransition] = useTransition();
   // const router = useRouter();
   useEffect(() => {
     if (!state) return;
@@ -26,6 +38,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       toast.error(state.message || 'Login failed. Please check your credentials.');
     }
   }, [state]);
+
+  const handleDemoLogin = (role: 'ADMIN' | 'PROVIDER') => {
+    startDemoTransition(async () => {
+      const result = await demoLoginAction(role);
+      if (!result?.success) {
+        toast.error(result?.message || 'Demo login failed.');
+      }
+    });
+  };
 
   return (
     <div className={cn('flex flex-col gap-6 w-full max-w-4xl mx-auto', className)} {...props}>
@@ -111,6 +132,44 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   {pending ? 'Logging in...' : 'Login'}
                 </Button>
               </Field>
+
+              <div className="space-y-3 border-t pt-5">
+                <div className="text-center">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    Quick demo access
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Use a demo account to explore a dashboard.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!demoAvailability.admin || demoPending}
+                    onClick={() => handleDemoLogin('ADMIN')}
+                    className="h-10 gap-2 text-xs"
+                  >
+                    <Crown className="size-3.5 text-amber-500" />
+                    {demoPending ? 'Signing in...' : 'Demo Admin'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!demoAvailability.provider || demoPending}
+                    onClick={() => handleDemoLogin('PROVIDER')}
+                    className="h-10 gap-2 text-xs"
+                  >
+                    <Store className="size-3.5 text-primary" />
+                    Demo Provider
+                  </Button>
+                </div>
+                {!demoAvailability.provider && (
+                  <p className="text-center text-[11px] text-muted-foreground">
+                    Provider demo access is not configured yet.
+                  </p>
+                )}
+              </div>
 
               {/* Register Callout */}
               <FieldDescription className="text-center text-xs text-muted-foreground pt-1">

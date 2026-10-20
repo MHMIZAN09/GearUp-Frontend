@@ -32,10 +32,11 @@ interface CategoryGearItem {
   quantityTotal: number;
   quantityAvailable: number;
   status: string;
-  provider: {
+  provider?: {
     id: string;
     name: string;
   };
+  providerId?: string;
 }
 
 interface CategoryDetails {
@@ -44,8 +45,9 @@ interface CategoryDetails {
   description: string;
   createdAt: string;
   updatedAt: string;
-  providerCount: number;
-  _count: {
+  providerCount?: number;
+  gearItemCount?: number;
+  _count?: {
     gearItems: number;
   };
   gearItems: CategoryGearItem[];
@@ -78,6 +80,9 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
   const category = result.data as CategoryDetails;
   const gearItems = category.gearItems ?? [];
   const availableItems = gearItems.filter((gear) => gear.status === 'AVAILABLE').length;
+  const providerCount =
+    category.providerCount ??
+    new Set(gearItems.map((gear) => gear.provider?.id ?? gear.providerId).filter(Boolean)).size;
 
   return (
     <main className="bg-background">
@@ -121,7 +126,9 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
                     <Boxes className="size-5" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold">{category._count.gearItems}</p>
+                    <p className="text-2xl font-bold">
+                      {category.gearItemCount ?? category._count?.gearItems ?? 0}
+                    </p>
                     <p className="text-sm text-muted-foreground">Total gear items</p>
                   </div>
                 </div>
@@ -133,7 +140,7 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
                     <Store className="size-5" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold">{category.providerCount}</p>
+                    <p className="text-2xl font-bold">{providerCount}</p>
                     <p className="text-sm text-muted-foreground">Trusted providers</p>
                   </div>
                 </div>
@@ -255,7 +262,9 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
 
                       <div className="mt-5 flex items-center gap-2 text-sm">
                         <UserRound className="size-4 text-muted-foreground" />
-                        <span className="truncate font-medium">{gear.provider.name}</span>
+                        <span className="truncate font-medium">
+                          {gear.provider?.name ?? 'Provider details unavailable'}
+                        </span>
                       </div>
 
                       <Button asChild className="mt-6 h-10 w-full rounded-full" size="lg">

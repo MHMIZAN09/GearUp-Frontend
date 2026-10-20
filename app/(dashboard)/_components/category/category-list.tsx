@@ -58,7 +58,9 @@ export async function CategoryList() {
                 </TableCell>
 
                 <TableCell>
-                  <Badge variant="secondary">{category._count.gearItems}</Badge>
+                  <Badge variant="secondary">
+                    {category.gearItemCount ?? category._count?.gearItems ?? 0}
+                  </Badge>
                 </TableCell>
 
                 <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>

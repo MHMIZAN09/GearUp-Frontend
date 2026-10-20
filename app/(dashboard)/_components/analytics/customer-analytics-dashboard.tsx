@@ -2,6 +2,8 @@ import {
   CheckCircle2,
   Clock3,
   CreditCard,
+  Compass,
+  ArrowRight,
   RotateCcw,
   Star,
   PackageCheck,
@@ -103,28 +105,36 @@ export async function CustomerAnalyticsDashboard() {
   const totalPickedUpRentals = analytics.totalPickedUpRentals ?? 0;
   const totalCancelledRentals = analytics.totalCancelledRentals ?? 0;
   const totalReviews = analytics.totalReviews ?? 0;
+  const totalRentals = getNumber(analytics.totalRentals);
+  const activeRentals = getNumber(totalPickedUpRentals) + getNumber(analytics.totalConfirmedRentals);
+  const activityRate = totalRentals > 0 ? Math.min(100, Math.round((activeRentals / totalRentals) * 100)) : 0;
 
   return (
     <main className="space-y-6">
-      <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <Badge variant="secondary" className="mb-3 rounded-full">
-            Customer Analytics
+      <section className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-primary/10 via-card to-sky-500/10 p-6 shadow-sm sm:p-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="absolute -right-16 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+          <Badge variant="secondary" className="mb-3 rounded-full px-3 py-1">
+            Your rental workspace
           </Badge>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard overview</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Plan your next adventure</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            See your rental activity, provider confirmations, payment status, reviews, and total
-            spending in one place.
+            Track every booking, payment, and review while discovering gear that fits your next
+            experience.
           </p>
-        </div>
+          </div>
 
-        <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline" className="rounded-full">
-            <Link href="/dashboard/rentals">My rentals</Link>
-          </Button>
-          <Button asChild className="rounded-full">
-            <Link href="/gear">Browse gear</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" className="rounded-full bg-background/70">
+              <Link href="/dashboard/rentals">My rentals</Link>
+            </Button>
+            <Button asChild className="rounded-full">
+              <Link href="/gear">
+                Browse gear <ArrowRight className="ml-1 size-3.5" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -146,10 +156,10 @@ export async function CustomerAnalyticsDashboard() {
               const value = getNumber(analytics[metric.key]);
 
               return (
-                <Card key={metric.key}>
+                <Card key={metric.key} className="border-border/70 transition-all hover:-translate-y-0.5 hover:shadow-md">
                   <CardContent className="flex items-center gap-4 p-5">
                     <div
-                      className={`flex size-11 items-center justify-center rounded-full ${metric.bg} ${metric.color}`}
+                      className={`flex size-11 shrink-0 items-center justify-center rounded-2xl ${metric.bg} ${metric.color}`}
                     >
                       <Icon className="size-5" />
                     </div>
@@ -175,6 +185,21 @@ export async function CustomerAnalyticsDashboard() {
                     </p>
                   </div>
                   <PackageCheck className="size-6 text-primary" />
+                </div>
+                <div className="mt-5 rounded-2xl border bg-muted/20 p-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Rental progress</span>
+                    <span className="font-semibold">{activityRate}% active</span>
+                  </div>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all"
+                      style={{ width: `${activityRate}%` }}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {activeRentals} active of {totalRentals} total rental requests
+                  </p>
                 </div>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -217,15 +242,20 @@ export async function CustomerAnalyticsDashboard() {
             </Card>
 
             <div className="grid gap-4">
-              <Card>
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-card">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground">Total Spent</p>
                       <p className="mt-2 text-3xl font-bold">{formatMoney(totalSpent)}</p>
                     </div>
-                    <Wallet className="size-8 text-primary" />
+                    <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10">
+                      <Wallet className="size-5 text-primary" />
+                    </div>
                   </div>
+                  <p className="mt-4 text-xs text-muted-foreground">
+                    Your completed rental spending
+                  </p>
                 </CardContent>
               </Card>
 
@@ -252,6 +282,25 @@ export async function CustomerAnalyticsDashboard() {
                   </Button>
                 </CardContent>
               </Card>
+            </div>
+          </section>
+
+          <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-r from-primary/10 via-card to-sky-500/10 p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+                  <Compass className="size-5" />
+                </div>
+                <div>
+                  <h2 className="font-semibold">Ready for your next trip?</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Explore verified equipment from trusted local providers.
+                  </p>
+                </div>
+              </div>
+              <Button asChild variant="outline" className="rounded-full">
+                <Link href="/gear">Explore marketplace</Link>
+              </Button>
             </div>
           </section>
         </>

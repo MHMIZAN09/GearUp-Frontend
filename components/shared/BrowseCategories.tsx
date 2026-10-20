@@ -9,6 +9,7 @@ type Category = {
   name: string;
   description?: string;
   imageUrl?: string | null;
+  gearItemCount?: number;
   _count?: {
     gearItems?: number;
   };
@@ -77,7 +78,7 @@ export default async function BrowseCategories() {
                     </p>
                     <Badge className="mt-3 gap-1 border-white/20 bg-white/15 text-white hover:bg-white/20">
                       <Boxes className="size-3.5" />
-                      {category._count?.gearItems ?? 0} gear items
+                      {category.gearItemCount ?? category._count?.gearItems ?? 0} gear items
                     </Badge>
                   </div>
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/15 backdrop-blur transition-colors group-hover:bg-primary">

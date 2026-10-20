@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getGearById } from '@/service/gear/gear.service';
+import { getMe } from '@/service/getMe';
 
 interface GearReview {
   id: string;
@@ -94,7 +95,7 @@ const getAverageRating = (reviews: GearReview[]) => {
 const GearDetailsPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  const result = await getGearById(id);
+  const [result, user] = await Promise.all([getGearById(id), getMe()]);
 
   if (!result?.success || !result?.data) {
     notFound();
@@ -353,6 +354,7 @@ const GearDetailsPage = async ({ params }: { params: Promise<{ id: string }> }) 
               gearId={gear.id}
               pricePerDay={Number(gear.pricePerDay)}
               quantityAvailable={gear.quantityAvailable}
+              isAuthenticated={Boolean(user?.success)}
             />
           </aside>
         </div>

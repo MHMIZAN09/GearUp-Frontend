@@ -265,7 +265,7 @@ const PaymentsPage = async () => {
 
                     <TableCell className="text-right">
                       <Button asChild variant="outline" size="sm">
-                        <Link href="/dashboard/rentals">Details</Link>
+                        <Link href={`/dashboard/payments/${paymentId}`}>Details</Link>
                       </Button>
                     </TableCell>
                   </TableRow>

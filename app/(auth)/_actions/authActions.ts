@@ -7,8 +7,10 @@ import { redirect } from 'next/navigation';
 export const loginAction = async (prevState: unknown, formData: FormData) => {
   const email = formData.get('email');
   const password = formData.get('password');
-  console.log(process.env.BACKEND_API_URL);
-  // console.log(email, password);
+  return authenticateUser(email, password);
+};
+
+const authenticateUser = async (email: FormDataEntryValue | null, password: FormDataEntryValue | null) => {
   const payload = {
     email,
     password,
@@ -51,6 +53,28 @@ export const loginAction = async (prevState: unknown, formData: FormData) => {
   }
 
   return result;
+};
+
+export const demoLoginAction = async (role: 'ADMIN' | 'PROVIDER') => {
+  const credentials =
+    role === 'ADMIN'
+      ? {
+          email: process.env.DEMO_ADMIN_EMAIL,
+          password: process.env.DEMO_ADMIN_PASSWORD,
+        }
+      : {
+          email: process.env.DEMO_PROVIDER_EMAIL,
+          password: process.env.DEMO_PROVIDER_PASSWORD,
+        };
+
+  if (!credentials.email || !credentials.password) {
+    return {
+      success: false,
+      message: `${role === 'ADMIN' ? 'Admin' : 'Provider'} demo credentials are not configured.`,
+    };
+  }
+
+  return authenticateUser(credentials.email, credentials.password);
 };
 
 export const registerAction = async (prevState: unknown, formData: FormData) => {

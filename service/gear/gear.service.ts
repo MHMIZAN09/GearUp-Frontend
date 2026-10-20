@@ -29,7 +29,22 @@ export const getAllGears = async ({
     },
   });
 
-  return res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to load gears: ${res.status} ${res.statusText}`);
+  }
+
+  const result = await res.json();
+  const data = result?.data;
+
+  return {
+    ...result,
+    data: Array.isArray(data) ? data : data?.gear ?? [],
+    meta: {
+      page: Number(data?.currentPage ?? query?.page ?? 1),
+      totalPages: Number(data?.totalPages ?? 1),
+      total: Number(data?.totalCount ?? 0),
+    },
+  };
 };
 
 export const getGearById = async (id: string) => {
