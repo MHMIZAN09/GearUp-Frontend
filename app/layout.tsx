@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   title: 'GearUp',
   description:
     "GearUp is a web application that helps you manage your gear and equipment efficiently. Keep track of your items, organize them, and ensure you're always prepared for your adventures.",
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, LogOut, Menu, Settings, User } from 'lucide-react';
+import { LayoutDashboard, LogOut, Menu, PackageCheck, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -118,8 +118,12 @@ export const Navbar = ({
               href={logo.url}
               className="flex items-center gap-2 transition-opacity hover:opacity-80"
             >
-              <img src={logo.src} className="max-h-7 dark:invert" alt={logo.alt} />
-              <span className="text-lg font-bold tracking-tight">{logo.title}</span>
+              <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20">
+                <PackageCheck className="size-5" />
+              </span>
+              <span className="text-lg font-bold tracking-tight">
+                Gear<span className="text-primary">Up</span>
+              </span>
             </Link>
 
             {/* Desktop Menu */}
@@ -197,8 +201,12 @@ export const Navbar = ({
         {/* --- Mobile Navigation --- */}
         <div className="flex items-center justify-between lg:hidden">
           <Link href={logo.url} className="flex items-center gap-2">
-            <img src={logo.src} className="max-h-7 dark:invert" alt={logo.alt} />
-            <span className="text-lg font-bold tracking-tight">{logo.title}</span>
+            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20">
+              <PackageCheck className="size-5" />
+            </span>
+            <span className="text-lg font-bold tracking-tight">
+              Gear<span className="text-primary">Up</span>
+            </span>
           </Link>
 
           <Sheet>
@@ -211,8 +219,12 @@ export const Navbar = ({
               <SheetHeader className="mb-4 text-left">
                 <SheetTitle>
                   <Link href={logo.url} className="flex items-center gap-2">
-                    <img src={logo.src} className="max-h-7 dark:invert" alt={logo.alt} />
-                    <span className="text-lg font-bold tracking-tight">{logo.title}</span>
+                    <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20">
+                      <PackageCheck className="size-5" />
+                    </span>
+                    <span className="text-lg font-bold tracking-tight">
+                      Gear<span className="text-primary">Up</span>
+                    </span>
                   </Link>
                 </SheetTitle>
               </SheetHeader>
