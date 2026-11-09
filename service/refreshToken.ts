@@ -1,5 +1,7 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+
 import { cookies } from 'next/headers';
 
 export const getNewAccessToken = async () => {
@@ -16,7 +18,7 @@ export const getNewAccessToken = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/auth/refresh-token`, {
+  const res = await fetch(`${BACKEND_URL}/api/auth/refresh-token`, {
     method: 'POST',
     headers: {
       Cookie: `refreshToken=${refreshToken}`,

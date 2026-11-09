@@ -1,5 +1,7 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+
 import { cookies } from 'next/headers';
 
 export const getAdminAllUsers = async () => {
@@ -14,7 +16,7 @@ export const getAdminAllUsers = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/users`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/users`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -39,7 +41,7 @@ export const getUserById = async (id: string) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/users/${id}`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/users/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +66,7 @@ export const deleteUserById = async (id: string) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/users/${id}`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/users/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -90,7 +92,7 @@ export const updateUsersStatus = async (id: string, fromData: FormData) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/users/${id}/status`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/users/${id}/status`, {
     method: 'PUT',
     headers: {
       cookie: `accessToken=${accessToken}`,

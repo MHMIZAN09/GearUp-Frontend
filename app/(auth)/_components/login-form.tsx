@@ -1,6 +1,7 @@
 'use client';
 
 import { Crown, Dumbbell, Eye, EyeOff, Lock, Mail, ShieldCheck, Store } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useActionState, useEffect, useState, useTransition } from 'react';
 
@@ -11,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { demoLoginAction, loginAction } from '../_actions/authActions';
+// import { GoogleLoginButton } from './google-login-button';
+
 
 type LoginFormProps = React.ComponentProps<'div'> & {
   demoAvailability?: {
@@ -25,11 +28,15 @@ export function LoginForm({
   ...props
 }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [state, action, pending] = useActionState(loginAction, false);
+  const [state, action, pending] = useActionState(loginAction, {
+    success: false,
+    message: '',
+  });
   const [demoPending, startDemoTransition] = useTransition();
+
   // const router = useRouter();
   useEffect(() => {
-    if (!state) return;
+    if (!state?.message) return;
     if (state?.success) {
       toast.success(state.message || 'Login successful!');
       // router.push('/');
@@ -133,6 +140,8 @@ export function LoginForm({
                 </Button>
               </Field>
 
+              
+
               <div className="space-y-3 border-t pt-5">
                 <div className="text-center">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
@@ -185,9 +194,17 @@ export function LoginForm({
           </form>
 
           {/* Right Column: Outdoor/Sports Visual Showcase */}
-          <div className="relative hidden bg-zinc-900 md:block overflow-hidden">
+          <div className="relative hidden min-h-[620px] overflow-hidden bg-zinc-900 md:block">
+            <Image
+              src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=85"
+              alt="Athlete training with sports equipment"
+              fill
+              priority
+              sizes="50vw"
+              className="object-cover opacity-90"
+            />
             {/* Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10" />
 
             {/* Overlay Content */}
             <div className="absolute inset-0 p-8 flex flex-col justify-between text-white z-10">

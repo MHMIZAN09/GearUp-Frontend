@@ -1,6 +1,22 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+
 import { cookies } from 'next/headers';
+
+function normalizeProfileImage(value: unknown) {
+  if (typeof value !== 'string' || !value) {
+    return null;
+  }
+
+  const imageUrl = value.match(/\]\((https?:\/\/[^)]+)\)/)?.[1] ?? value;
+
+  if (imageUrl.startsWith('/')) {
+    return new URL(imageUrl, BACKEND_URL).toString();
+  }
+
+  return imageUrl;
+}
 
 export const getMe = async () => {
   const cookieStore = await cookies();
@@ -15,7 +31,7 @@ export const getMe = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL}/api/auth/me`, {
+  const res = await fetch(`${BACKEND_URL}/api/auth/me`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -25,6 +41,14 @@ export const getMe = async () => {
   });
 
   const result = await res.json();
+
+  if (result?.data) {
+    result.data = {
+      ...result.data,
+      profilePhoto: normalizeProfileImage(result.data.profilePhoto ?? result.data.imageUrl),
+    };
+  }
+
   // console.log('getMe result:', result);
   return result;
 };

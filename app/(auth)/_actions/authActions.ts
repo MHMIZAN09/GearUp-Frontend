@@ -1,107 +1,250 @@
 'use server';
 
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { BACKEND_URL } from '@/lib/backend-url';
+
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export const loginAction = async (prevState: unknown, formData: FormData) => {
-  const email = formData.get('email');
-  const password = formData.get('password');
-  return authenticateUser(email, password);
+const API_BASE_URL = `${BACKEND_URL}/api/auth`;
+
+type AuthResponse = {
+  success: boolean;
+  message?: string;
+  data?: {
+    accessToken?: string;
+    refreshToken?: string;
+    user?: { role?: string };
+  } | null;
 };
 
-const authenticateUser = async (email: FormDataEntryValue | null, password: FormDataEntryValue | null) => {
-  const payload = {
-    email,
-    password,
-  };
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
+type ActionState = AuthResponse | false;
 
-  const result = await res.json();
-  // console.log(result);
+const TRANSIENT_BACKEND_STATUSES = new Set([404, 502, 503, 504]);
 
-  if (result.success) {
-    const cookieStore = await cookies();
+async function postAuthRequest(path: string, body: Record<string, unknown>): Promise<AuthResponse> {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/${path}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        cache: 'no-store',
+        signal: AbortSignal.timeout(10000),
+      });
 
-    cookieStore.set('accessToken', result.data.accessToken, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 1000, // 1 day in milliseconds
-      sameSite: 'lax',
-    });
+      const rawBody = await response.text();
 
-    cookieStore.set('refreshToken', result.data.refreshToken, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'lax',
-    });
+      try {
+        const result = JSON.parse(rawBody) as AuthResponse;
 
-    const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
+        if (TRANSIENT_BACKEND_STATUSES.has(response.status) && attempt === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          continue;
+        }
 
-    if (decodedToken.role === 'ADMIN') {
-      redirect('/admin-dashboard');
-    } else if (decodedToken.role === 'PROVIDER') {
-      redirect('/provider-dashboard');
-    } else if (decodedToken.role === 'CUSTOMER') {
-      redirect('/dashboard');
+        return {
+          ...result,
+          success: result.success === true && response.ok,
+          message: result.message ?? (response.ok ? 'Request completed.' : 'Request failed.'),
+        };
+      } catch (error) {
+        console.error(`Authentication endpoint returned invalid JSON for ${path}.`, error);
+
+        if (attempt === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          continue;
+        }
+
+        return {
+          success: false,
+          message: response.ok
+            ? 'The authentication server returned an invalid response.'
+            : `Authentication server error (${response.status}). Please try again later.`,
+        };
+      }
+    } catch (error) {
+      console.error(`Unable to reach authentication endpoint ${path}.`, error);
+
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        continue;
+      }
+
+      return {
+        success: false,
+        message: 'Unable to reach the authentication server. Please try again later.',
+      };
     }
   }
 
-  return result;
-};
+  return { success: false, message: 'Authentication request failed. Please try again later.' };
+}
 
-export const demoLoginAction = async (role: 'ADMIN' | 'PROVIDER') => {
-  const credentials =
-    role === 'ADMIN'
-      ? {
-          email: process.env.DEMO_ADMIN_EMAIL,
-          password: process.env.DEMO_ADMIN_PASSWORD,
-        }
-      : {
-          email: process.env.DEMO_PROVIDER_EMAIL,
-          password: process.env.DEMO_PROVIDER_PASSWORD,
-        };
+function getRole(accessToken?: string, userRole?: string) {
+  if (userRole) return userRole;
+  if (!accessToken) return undefined;
 
-  if (!credentials.email || !credentials.password) {
-    return {
-      success: false,
-      message: `${role === 'ADMIN' ? 'Admin' : 'Provider'} demo credentials are not configured.`,
-    };
+  try {
+    return (jwt.decode(accessToken) as (JwtPayload & { role?: string }) | null)?.role;
+  } catch {
+    return undefined;
+  }
+}
+
+async function storeAuthCookies(data: NonNullable<AuthResponse['data']>) {
+  if (!data.accessToken || !data.refreshToken) {
+    return false;
   }
 
-  return authenticateUser(credentials.email, credentials.password);
-};
+  const cookieStore = await cookies();
+  const secure = process.env.NODE_ENV === 'production';
 
-export const registerAction = async (prevState: unknown, formData: FormData) => {
-  const name = formData.get('name');
-  const email = formData.get('email');
-  const password = formData.get('password');
-  const role = formData.get('role');
-  console.log(name, email, password, role);
-
-  const payload = {
-    name,
-    email,
-    password,
-    role,
-  };
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
+  cookieStore.set('accessToken', data.accessToken, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24,
+    path: '/',
+  });
+  cookieStore.set('refreshToken', data.refreshToken, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7,
+    path: '/',
   });
 
-  const result = await res.json();
-  // console.log(result);
+  return true;
+}
+
+function redirectForRole(role?: string): never {
+  if (role === 'ADMIN') redirect('/admin-dashboard');
+  if (role === 'PROVIDER') redirect('/provider-dashboard');
+  redirect('/dashboard');
+}
+
+async function authenticateUser(email: string, password: string): Promise<AuthResponse> {
+  const result = await postAuthRequest('login', { email, password });
+
+  if (result.success && result.data?.accessToken && result.data.refreshToken) {
+    await storeAuthCookies(result.data);
+    redirectForRole(getRole(result.data.accessToken, result.data.user?.role));
+  }
+
+  return result;
+}
+
+export async function loginAction(_prevState: ActionState, formData: FormData) {
+  return authenticateUser(
+    String(formData.get('email') ?? ''),
+    String(formData.get('password') ?? ''),
+  );
+}
+
+export async function registerAction(_prevState: ActionState, formData: FormData) {
+  const email = String(formData.get('email') ?? '').trim().toLowerCase();
+  const result = await postAuthRequest('register', {
+    name: String(formData.get('name') ?? '').trim(),
+    email,
+    password: String(formData.get('password') ?? ''),
+    role: String(formData.get('role') ?? 'CUSTOMER'),
+  });
+
+  if (result.success) {
+    redirect(`/verify-email?email=${encodeURIComponent(email)}`);
+  }
+
+  return result;
+}
+
+export async function googleLoginAction(_prevState: ActionState, formData: FormData) {
+  const result = await postAuthRequest('google', {
+    idToken: String(formData.get('idToken') ?? ''),
+  });
+
+  if (result.success && result.data?.accessToken && result.data.refreshToken) {
+    await storeAuthCookies(result.data);
+    redirectForRole(getRole(result.data.accessToken, result.data.user?.role));
+  }
+
+  return result;
+}
+
+export async function verifyEmailAction(_prevState: ActionState, formData: FormData) {
+  const result = await postAuthRequest('verify-email', {
+    email: String(formData.get('email') ?? '').trim().toLowerCase(),
+    otp: String(formData.get('otp') ?? '').trim(),
+  });
+
+  if (result.success && result.data?.accessToken && result.data.refreshToken) {
+    await storeAuthCookies(result.data);
+    redirectForRole(getRole(result.data.accessToken, result.data.user?.role));
+  }
+
+  return result;
+}
+
+export async function forgotPasswordAction(_prevState: ActionState, formData: FormData) {
+  const email = String(formData.get('email') ?? '').trim().toLowerCase();
+  const result = await postAuthRequest('forgot-password', { email });
+
+  if (result.success) {
+    redirect(`/reset-password?email=${encodeURIComponent(email)}`);
+  }
+
+  return result;
+}
+
+export async function resetPasswordAction(_prevState: ActionState, formData: FormData) {
+  const password = String(formData.get('password') ?? '');
+  const confirmPassword = String(formData.get('confirmPassword') ?? '');
+
+  if (password !== confirmPassword) {
+    return { success: false, message: 'Passwords do not match.' };
+  }
+
+  const result = await postAuthRequest('reset-password', {
+    email: String(formData.get('email') ?? '').trim().toLowerCase(),
+    otp: String(formData.get('otp') ?? '').trim(),
+    newPassword: password,
+  });
+
   if (result.success) {
     redirect('/login');
   }
+
   return result;
+}
+
+export const demoLoginAction = async (role: 'ADMIN' | 'PROVIDER') => {
+  const email = role === 'ADMIN' ? process.env.DEMO_ADMIN_EMAIL : process.env.DEMO_PROVIDER_EMAIL;
+  const password =
+    role === 'ADMIN' ? process.env.DEMO_ADMIN_PASSWORD : process.env.DEMO_PROVIDER_PASSWORD;
+
+  if (!email || !password) {
+    return {
+      success: false,
+      message: `${role === 'ADMIN' ? 'Admin' : 'Provider'} demo credentials missing.`,
+    };
+  }
+
+  return authenticateUser(email, password);
 };
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+
+  if (accessToken) {
+    await fetch(`${API_BASE_URL}/logout`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+    }).catch(() => undefined);
+  }
+
+  cookieStore.delete('accessToken');
+  cookieStore.delete('refreshToken');
+  redirect('/login');
+}

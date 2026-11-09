@@ -1,5 +1,7 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -35,7 +37,7 @@ export async function createRental(formData: FormData) {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rental`, {
+  const res = await fetch(`${BACKEND_URL}/api/rental`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +66,7 @@ export async function getCustomerRentals() {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rental`, {
+  const res = await fetch(`${BACKEND_URL}/api/rental`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -90,7 +92,7 @@ export async function getProviderRentals() {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/provider/rentals`, {
+  const res = await fetch(`${BACKEND_URL}/api/provider/rentals`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -116,7 +118,7 @@ export async function confirmRental(rentalId: string) {
   }
 
   const res = await fetch(
-    `${process.env.BACKEND_URL_LOCAL}/api/provider/rentals/${rentalId}/confirm`,
+    `${BACKEND_URL}/api/provider/rentals/${rentalId}/confirm`,
     {
       method: 'PATCH',
       headers: {
@@ -146,7 +148,7 @@ export const getRentalById = async (rentalId: string) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/provider/rentals/${rentalId}`, {
+  const res = await fetch(`${BACKEND_URL}/api/provider/rentals/${rentalId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -172,7 +174,7 @@ export const cancelRental = async (rentalId: string) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/rentals/${rentalId}/cancel`, {
+  const res = await fetch(`${BACKEND_URL}/api/rentals/${rentalId}/cancel`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -199,7 +201,7 @@ export const getAllRentals = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/rentals`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/rentals`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -225,7 +227,7 @@ export const updateRentalStatusByAdmin = async (rentalId: string, status: string
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/rentals/${rentalId}/status`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/rentals/${rentalId}/status`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -255,7 +257,7 @@ export const updateRentalStatusByProvider = async (rentalId: string, status: str
   }
 
   const res = await fetch(
-    `${process.env.BACKEND_URL_LOCAL}/api/provider/rentals/${rentalId}/status`,
+    `${BACKEND_URL}/api/provider/rentals/${rentalId}/status`,
     {
       method: 'PATCH',
       headers: {

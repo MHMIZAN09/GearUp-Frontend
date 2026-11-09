@@ -1,9 +1,11 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
-const BASE_URL = `${process.env.BACKEND_URL_LOCAL}/api/provider/gears`;
+const BASE_URL = `${BACKEND_URL}/api/provider/gears`;
 
 // Get My Gears
 export async function getMyGears() {
@@ -251,7 +253,7 @@ export async function getAllGears() {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/gears`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/gears`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

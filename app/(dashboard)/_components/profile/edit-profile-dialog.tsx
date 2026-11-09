@@ -8,14 +8,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { ImageUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect } from 'react';
+import { ChangeEvent, useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { updateUserProfile } from '../../_actions/profile.actions';
+import {
+  updateUserProfile,
+  uploadProfileImage,
+} from '../../_actions/profile.actions';
 import { IUserProfile } from './profile-header';
 
 interface EditProfileDialogProps {
@@ -32,6 +37,20 @@ export default function EditProfileDialog({ open, onOpenChange, user }: EditProf
     message: '',
   };
   const [state, action, pending] = useActionState(updateUserProfile, initialState);
+  const [imageState, imageAction, imagePending] = useActionState(
+    uploadProfileImage,
+    initialState,
+  );
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(user.profilePhoto ?? undefined);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl?.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   useEffect(() => {
     if (!state) return;
 
@@ -43,6 +62,23 @@ export default function EditProfileDialog({ open, onOpenChange, user }: EditProf
       toast.error(state.message);
     }
   }, [state, router, onOpenChange]);
+
+  useEffect(() => {
+    if (!imageState) return;
+
+    if (imageState.success) {
+      toast.success(imageState.message);
+      router.refresh();
+    } else if (imageState.message) {
+      toast.error(imageState.message);
+    }
+  }, [imageState, router]);
+
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const image = event.target.files?.[0] ?? null;
+    setPreviewUrl(image ? URL.createObjectURL(image) : user.profilePhoto ?? undefined);
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl rounded-2xl">
@@ -82,14 +118,33 @@ export default function EditProfileDialog({ open, onOpenChange, user }: EditProf
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="profilePhoto">Profile Photo URL</Label>
+            <Label htmlFor="profileImage">Profile Image</Label>
 
-            <Input
-              id="profilePhoto"
-              name="profilePhoto"
-              defaultValue={user.profilePhoto ?? ''}
-              placeholder="https://example.com/avatar.png"
-            />
+            <div className="flex items-center gap-4">
+              <Avatar className="h-14 w-14 border-2 border-primary/10">
+                <AvatarImage src={previewUrl} alt="Profile image preview" />
+                <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <Input
+                  id="profileImage"
+                  name="profileImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <Button
+                  type="submit"
+                  formAction={imageAction}
+                  variant="secondary"
+                  disabled={imagePending}
+                >
+                  <ImageUp className="mr-2 h-4 w-4" />
+                  {imagePending ? 'Uploading...' : 'Upload'}
+                </Button>
+              </div>
+            </div>
           </div>
 
           <DialogFooter>

@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
@@ -27,7 +28,7 @@ export async function createCategory(prevState: any, formData: FormData) {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/category`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/category`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ export async function updateCategory(id: string, prevState: any, formData: FormD
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/category/${id}`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/category/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -101,7 +102,7 @@ export async function deleteCategory(id: string) {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/category/${id}`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/category/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

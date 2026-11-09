@@ -7,7 +7,17 @@ import { jwtUtils } from './utils/jwt';
 
 const AUTH_ROUTES = ['/login', '/register'];
 
-const PUBLIC_ROUTES = ['/', '/about', '/contact', '/gear', '/category', '/payment/result'];
+const PUBLIC_ROUTES = [
+  '/',
+  '/about',
+  '/contact',
+  '/gear',
+  '/category',
+  '/payment/result',
+  '/forgot-password',
+  '/reset-password',
+  '/verify-email',
+];
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -39,8 +49,17 @@ export async function proxy(request: NextRequest) {
       response.cookies.set('accessToken', accessToken!, {
         httpOnly: true,
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 1000,
+        maxAge: 60 * 60 * 24,
       });
+      if (result.data.refreshToken) {
+        response.cookies.set('refreshToken', result.data.refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7,
+          path: '/',
+        });
+      }
 
       decodedAccessToken = jwtUtils.verifyToken(
         accessToken!,
@@ -62,7 +81,7 @@ export async function proxy(request: NextRequest) {
     userRole = (decodedAccessToken.data as JwtPayload).role;
   }
 
-  if (accessToken && AUTH_ROUTES.includes(pathname)) {
+  if (decodedAccessToken?.success && AUTH_ROUTES.includes(pathname)) {
     switch (userRole) {
       case 'ADMIN':
         return NextResponse.redirect(new URL('/admin-dashboard', request.url));

@@ -17,7 +17,8 @@ type Category = {
 
 export default async function BrowseCategories() {
   const result = await getAllCategories();
-  const categories: Category[] = result?.success && Array.isArray(result.data) ? result.data : [];
+  const categories: Category[] =
+    result?.success && Array.isArray(result.data) ? result.data.slice(0, 6) : [];
 
   return (
     <section aria-labelledby="browse-categories-title" className="mx-auto max-w-6xl py-4">
@@ -63,7 +64,11 @@ export default async function BrowseCategories() {
                 <div
                   aria-hidden="true"
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                  style={{ backgroundImage: `url(${category.imageUrl})` }}
+                  style={{
+                    backgroundImage: `url("${category.imageUrl}")`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                  }}
                 />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-muted to-background" />

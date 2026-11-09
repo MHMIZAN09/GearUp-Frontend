@@ -1,8 +1,9 @@
+import { BACKEND_URL } from '@/lib/backend-url';
 import { NextResponse } from 'next/server';
 
 const getBackendPaymentUrl = (request: Request) => {
   const url = new URL(request.url);
-  const backendUrl = new URL(`${process.env.BACKEND_URL_LOCAL}/api/payment`);
+  const backendUrl = new URL(`${BACKEND_URL}/api/payment`);
 
   url.searchParams.forEach((value, key) => {
     backendUrl.searchParams.append(key, value);

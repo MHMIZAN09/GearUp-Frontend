@@ -1,5 +1,20 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+import { readApiResponse } from '@/lib/read-api-response';
+
+type GearListResponse = {
+  data?: unknown[] | { gear?: unknown[]; currentPage?: number; totalPages?: number; totalCount?: number };
+  [key: string]: unknown;
+};
+
+type GearDetailsResponse = {
+  success?: boolean;
+  statusCode?: number;
+  message?: string;
+  data?: unknown;
+};
+
 export const getAllGears = async ({
   query,
 }: {
@@ -21,40 +36,62 @@ export const getAllGears = async ({
     }
   });
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear?${params.toString()}`, {
-    cache: 'force-cache',
-    next: {
-      revalidate: 60,
-      tags: ['gears'],
-    },
-  });
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/gear?${params.toString()}`, {
+      cache: 'force-cache',
+      next: {
+        revalidate: 60,
+        tags: ['gears'],
+      },
+    });
 
-  if (!res.ok) {
-    throw new Error(`Failed to load gears: ${res.status} ${res.statusText}`);
+    const result = await readApiResponse<GearListResponse>(res);
+    const data = result?.data;
+    const paginatedData = !Array.isArray(data) ? data : undefined;
+
+    return {
+      ...result,
+      data: Array.isArray(data) ? data : paginatedData?.gear ?? [],
+      meta: {
+        page: Number(paginatedData?.currentPage ?? query?.page ?? 1),
+        totalPages: Number(paginatedData?.totalPages ?? 1),
+        total: Number(paginatedData?.totalCount ?? 0),
+      },
+    };
+  } catch (error) {
+    console.error('Unable to load gears.', error);
+    return {
+      success: false,
+      statusCode: 503,
+      message: 'Gears are temporarily unavailable.',
+      data: [],
+      meta: {
+        page: Number(query?.page ?? 1),
+        totalPages: 0,
+        total: 0,
+      },
+    };
   }
-
-  const result = await res.json();
-  const data = result?.data;
-
-  return {
-    ...result,
-    data: Array.isArray(data) ? data : data?.gear ?? [],
-    meta: {
-      page: Number(data?.currentPage ?? query?.page ?? 1),
-      totalPages: Number(data?.totalPages ?? 1),
-      total: Number(data?.totalCount ?? 0),
-    },
-  };
 };
 
 export const getGearById = async (id: string) => {
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/gear/${id}`, {
-    cache: 'force-cache',
-    next: {
-      revalidate: 60,
-      tags: ['gears'],
-    },
-  });
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/gear/${id}`, {
+      cache: 'force-cache',
+      next: {
+        revalidate: 60,
+        tags: ['gears'],
+      },
+    });
 
-  return res.json();
+    return await readApiResponse<GearDetailsResponse>(res);
+  } catch (error) {
+    console.error(`Unable to load gear ${id}.`, error);
+    return {
+      success: false,
+      statusCode: 503,
+      message: 'Gear is temporarily unavailable.',
+      data: null,
+    };
+  }
 };

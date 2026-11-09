@@ -1,5 +1,6 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
 import { cookies } from 'next/headers';
 
 export const getCustomerAnalytics = async () => {
@@ -14,7 +15,7 @@ export const getCustomerAnalytics = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/user/analytics`, {
+  const res = await fetch(`${BACKEND_URL}/api/user/analytics`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ export const getAdminAnalytics = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/analytics`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/analytics`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ export const getProviderAnalytics = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/provider/analytics`, {
+  const res = await fetch(`${BACKEND_URL}/api/provider/analytics`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

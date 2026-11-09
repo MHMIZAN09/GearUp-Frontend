@@ -1,9 +1,12 @@
+import { connection } from 'next/server';
+
 import { getAllCategories } from '@/service/category/category.service';
 
 import { GearFormDialog } from '../../_components/gear/gear-form-dialog';
 import { GearTable } from '../../_components/gear/provider-gear-table';
 
 const GearsPage = async () => {
+  await connection();
   const categoriesResult = await getAllCategories();
   const categories = categoriesResult?.success ? categoriesResult.data : [];
 

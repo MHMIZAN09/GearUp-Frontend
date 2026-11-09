@@ -1,5 +1,7 @@
 'use server';
 
+import { BACKEND_URL } from '@/lib/backend-url';
+
 import { cookies } from 'next/headers';
 
 export const getAllPaymentsByAdmin = async () => {
@@ -14,7 +16,7 @@ export const getAllPaymentsByAdmin = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/admin/payments`, {
+  const res = await fetch(`${BACKEND_URL}/api/admin/payments`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -39,7 +41,7 @@ export const getAllPaymentsByUser = async () => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/payment`, {
+  const res = await fetch(`${BACKEND_URL}/api/payment`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +66,7 @@ export const getPaymentById = async (id: string) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/payment/${id}`, {
+  const res = await fetch(`${BACKEND_URL}/api/payment/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -89,7 +91,7 @@ export const getAdminPaymentById = async (id: string) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/payment/${id}`, {
+  const res = await fetch(`${BACKEND_URL}/api/payment/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -114,7 +116,7 @@ export const createPayment = async (payload: { rentalOrderId: string }) => {
     };
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL_LOCAL}/api/payment/create`, {
+  const res = await fetch(`${BACKEND_URL}/api/payment/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

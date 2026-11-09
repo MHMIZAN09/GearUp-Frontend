@@ -12,14 +12,18 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { registerAction } from '../_actions/authActions';
+// import { GoogleLoginButton } from './google-login-button';
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'CUSTOMER' | 'PROVIDER'>('CUSTOMER');
-  const [state, action, pending] = useActionState(registerAction, false);
+  const [state, action, pending] = useActionState(registerAction, {
+    success: false,
+    message: '',
+  });
 
   useEffect(() => {
-    if (!state) return;
+    if (!state?.message) return;
 
     if (state.success) {
       toast.success(state.message || 'Registration successful!');
@@ -165,6 +169,8 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
                 </Button>
               </Field>
 
+                  
+
               {/* Login Callout */}
               <FieldDescription className="text-center text-xs text-muted-foreground pt-1">
                 Already have an account?{' '}
@@ -179,16 +185,17 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
           </form>
 
           {/* Right Column: Outdoor/Sports Visual Showcase */}
-          <div className="relative hidden bg-zinc-900 md:block overflow-hidden">
+          <div className="relative block h-52 overflow-hidden bg-zinc-900 md:min-h-[620px]">
             <Image
-              src="https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80"
-              alt="GearUp Sports Equipment"
+              src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=85"
+              alt="Athlete training with sports equipment"
               fill
+              priority
               sizes="50vw"
-              className="absolute inset-0 h-full w-full object-cover opacity-80 mix-blend-overlay transition-transform duration-700 hover:scale-105"
+              className="object-cover opacity-90 transition-transform duration-700 hover:scale-105"
             />
             {/* Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10" />
 
             {/* Overlay Content */}
             <div className="absolute inset-0 p-8 flex flex-col justify-between text-white z-10">
